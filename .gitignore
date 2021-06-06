@@ -2,6 +2,8 @@
 
 # IDE Pycharm
 .idea/
+.eslintcache
+
 
 # dependencies
 /node_modules
