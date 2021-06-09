@@ -5,15 +5,15 @@ import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
 const emailDispatcher = (prevState, action) => {
-  if (action.type === "USER_INPUT"){
-      return {value: action.value, isValid: true};
-  }
+    if (action.type === "USER_INPUT") {
+        return {value: action.value, isValid: true};
+    }
 
-  if (action.type === "INPUT_BLUR"){
-      return {value: prevState.value, isValid: prevState.value.includes('@')};
-  }
+    if (action.type === "INPUT_BLUR") {
+        return {value: prevState.value, isValid: prevState.value.includes('@')};
+    }
 
-  return {value: '', isValid: false};
+    return {value: '', isValid: false};
 };
 
 const Login = (props) => {
