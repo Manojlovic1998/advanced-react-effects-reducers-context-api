@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useEffect, useState} from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -6,7 +6,7 @@ import Button from '../UI/Button/Button';
 
 const emailDispatcher = (prevState, action) => {
     if (action.type === "USER_INPUT") {
-        return {value: action.value, isValid: true};
+        return {value: action.value, isValid: action.value.includes('@')};
     }
 
     if (action.type === "INPUT_BLUR") {
@@ -18,7 +18,7 @@ const emailDispatcher = (prevState, action) => {
 
 const passwordDispatcher = (prevState, action) => {
     if (action.type === "USER_INPUT") {
-        return {value: action.value, isValid: true};
+        return {value: action.value, isValid: action.value.trim().length > 6};
     }
 
     if (action.type === "INPUT_BLUR") {
@@ -32,20 +32,26 @@ const Login = (props) => {
 
     const [emailStatus, setEmailStatus] = useReducer(emailDispatcher, {value: '', isValid: null});
     const [passwordStatus, setPasswordStatus] = useReducer(passwordDispatcher, {value: '', isValid: null});
-    // useEffect(() => {
-    //     const identifier = setTimeout(() => {
-    //         console.log("Checking for validity!");
-    //         setFormIsValid(
-    //             enteredEmail.includes('@') && enteredPassword.trim().trim().length > 6
-    //         );
-    //     }, 500);
-    //
-    //     // clean up function
-    //     return () => {
-    //         console.log("Cleanup");
-    //         clearTimeout(identifier);
-    //     };
-    // }, [enteredEmail, enteredPassword]);
+    const [formIsValid, setFormIsValid] = useState(false);
+
+
+    const {isValid: emailValidity} = emailStatus;
+    const {isValid: passwordValidity} = passwordStatus;
+
+    useEffect(() => {
+        const identifier = setTimeout(() => {
+            console.log("Checking for validity!");
+            setFormIsValid(
+                emailValidity && passwordValidity
+            );
+        }, 500);
+
+        // clean up function
+        return () => {
+            console.log("Cleanup");
+            clearTimeout(identifier);
+        };
+    }, [emailValidity, passwordValidity]);
 
     const emailChangeHandler = (event) => {
         setEmailStatus({type: "USER_INPUT", value: event.target.value});
@@ -65,7 +71,7 @@ const Login = (props) => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        props.onLogin(emailStatus.value, passwordStatus.value,);
+        props.onLogin(emailStatus.value, passwordStatus.value);
     };
 
     return (
@@ -100,7 +106,7 @@ const Login = (props) => {
                     />
                 </div>
                 <div className={classes.actions}>
-                    <Button type="submit" className={classes.btn} disabled={!emailStatus.isValid}>
+                    <Button type="submit" className={classes.btn} disabled={!formIsValid}>
                         Login
                     </Button>
                 </div>
